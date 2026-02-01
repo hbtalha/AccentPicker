@@ -117,20 +117,15 @@ KeyMonitor::KeyMonitor(QObject *parent)
 {
 
     monitorThread = new KeyMonitorThread(this);
-    holdTimer = new QTimer(this);
-    holdTimer->setSingleShot(true);
 
     connect(monitorThread, &KeyMonitorThread::keyPressed,
             this, &KeyMonitor::handleKeyPress);
     connect(monitorThread, &KeyMonitorThread::keyReleased,
             this, &KeyMonitor::handleKeyRelease);
-    connect(holdTimer, &QTimer::timeout,
-            this, &KeyMonitor::checkKeyHold);
 }
 
 KeyMonitor::~KeyMonitor()
 {
-    flushTagetDisplay();
     stop();
 }
 
@@ -143,7 +138,6 @@ bool KeyMonitor::start()
 void KeyMonitor::stop()
 {
     monitorThread->stop();
-    holdTimer->stop();
 }
 
 void KeyMonitor::handleKeyPress(int keycode, const QString &keysym)
@@ -166,7 +160,6 @@ void KeyMonitor::handleKeyPress(int keycode, const QString &keysym)
 void KeyMonitor::handleKeyRelease(int keycode)
 {
     if (keycode == currentKeycode) {
-        holdTimer->stop();
         currentKeycode = -1;
         currentChar.clear();
         keyIsHeld = false;
@@ -301,14 +294,5 @@ void KeyMonitor::insertText(const QString &text)
     QTimer::singleShot(50, [cb, backup]() {
         cb->setMimeData(backup);
     });
-}
-
-void KeyMonitor::flushTagetDisplay()
-{
-    if(targetDisplay) {
-        XFlush(targetDisplay);
-        XCloseDisplay(targetDisplay);
-        targetDisplay = nullptr;
-    }
 }
 

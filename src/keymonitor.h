@@ -71,11 +71,8 @@ private:
     QString getCharFromKeysym(const QString &keysym);
     QPoint getCursorPosition();
     void simulateBackspace();
-    void flushTagetDisplay();
 
     KeyMonitorThread *monitorThread;
-    QTimer *holdTimer;
-    Display *targetDisplay = nullptr;
 
     int currentKeycode;
     QString currentChar;
