@@ -1,0 +1,9 @@
+build
+.qtcreator
+.installer
+debian/*.log
+debian/*.substvars
+debian/debhelper-build-stamp
+debian/accentpicker
+debian/.debhelper
+obj-x86_64-linux-gnu

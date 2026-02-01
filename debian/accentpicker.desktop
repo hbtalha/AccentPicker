@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Accent Picker
+Comment=Accent Picker utility provides an alternative way to type accented characters
+Exec=/opt/HBatalha/AccentPicker/bin/accentpicker
+Icon=accentpicker
+Terminal=false
+Type=Application
+Categories=Utilility;
+Keywords=Accent;Accent Picker;Quick Accent;
+Name[en_US]=Accent Picker

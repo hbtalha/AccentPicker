@@ -1,0 +1,18 @@
+# Source package
+Source: accentpicker
+Section: utils
+Priority: optional
+Maintainer: Helder Batalha <helderbatalhadvlpr@gmail.com>
+Build-Depends:
+ debhelper-compat (= 13) 
+Standards-Version: 4.6.2
+Homepage: https://github.com/hbtalha/AccentPicker
+
+# Binary package stanza
+Package: accentpicker
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt6core6, libqt6gui6, libqt6widgets6, libx11-6, libxext6, libxtst6
+Description: Accent Picker for Linux (X11)
+ Accent Picker is a Linux utility inspired by Microsoft PowerToys Quick Accent on Windows.
+ Runs on X11 only using Qt 6 and X11 extensions.
+
