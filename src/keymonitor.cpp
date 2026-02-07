@@ -142,9 +142,15 @@ void KeyMonitor::stop()
 
 void KeyMonitor::handleKeyPress(int keycode, const QString &keysym)
 {
+    static QSet<QString> activationKeys = {
+        "space",
+        "Right",
+        "Left",
+    };
+
     QString character = getCharFromKeysym(keysym);
 
-    if(keyIsHeld && !isAccentPickerVisible && keysym == "space") {
+    if(keyIsHeld && !isAccentPickerVisible && activationKeys.contains(keysym)) {
 
         // removes the space key
         simulateBackspace();
