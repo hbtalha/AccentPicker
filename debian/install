@@ -1,0 +1,3 @@
+debian/accentpicker/usr/bin/accentpicker  opt/HBatalha/AccentPicker/bin/
+debian/accentpicker.desktop     usr/share/applications/
+icons/accentpicker.png              usr/share/icons/hicolor/256x256/apps/

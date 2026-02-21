@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/accentpicker.png</file>
+    </qresource>
+</RCC>
+

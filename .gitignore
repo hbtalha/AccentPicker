@@ -1,0 +1,11 @@
+build
+.installer
+debian/*.log
+debian/*.substvars
+debian/debhelper-build-stamp
+debian/accentpicker
+debian/files
+debian/.debhelper
+obj-x86_64-linux-gnu
+cq_res
+.qt*
