@@ -185,7 +185,7 @@ void KeyMonitor::setActive(bool enabled)
 bool KeyMonitor::start()
 {
     monitorThread->start();
-    return true;
+    return monitorThread->isRunning();
 }
 
 void KeyMonitor::stop()
