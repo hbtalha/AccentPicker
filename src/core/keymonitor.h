@@ -6,11 +6,14 @@
 #include <QObject>
 #include <QTimer>
 #include <QThread>
-#include <QMap>
+#include <atomic>
 
 struct _XDisplay;
 typedef struct _XDisplay Display;
 using XRecordContext = unsigned long;
+
+// uninitialized
+const int UN_INIT = -1;
 
 namespace X11Events
 {
@@ -28,6 +31,7 @@ public:
 
     void run() override;
     void stop();
+    int spaceKeyCode() const;
 
 signals:
     void keyPressed(int keycode, const QString &keysym);
@@ -40,6 +44,9 @@ private:
     Display *dataDisplay;
     XRecordContext context;
     bool running;
+    std::atomic<int> m_spaceKeyCode{UN_INIT};
+
+    void closeDisplay();
 };
 
 class KeyMonitor : public QObject
@@ -77,8 +84,6 @@ private:
     bool keyIsHeld;
     bool isAccentPickerVisible = false;
     unsigned long lastWindow;
-
-    static const int HOLD_THRESHOLD_MS = 500;
 };
 
 #endif // KEYMONITOR_H

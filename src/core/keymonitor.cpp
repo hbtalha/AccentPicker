@@ -86,7 +86,12 @@ void KeyMonitorThread::run()
 
     if (!display || !dataDisplay) {
         qWarning() << "Failed to open display";
+        closeDisplay();
         return;
+    }
+
+    if (m_spaceKeyCode.load() == UN_INIT) {
+        m_spaceKeyCode.store(XKeysymToKeycode(display, XK_space));
     }
 
     XRecordClientSpec clients = XRecordAllClients;
@@ -94,6 +99,7 @@ void KeyMonitorThread::run()
 
     if (!range) {
         qWarning() << "Failed to allocate XRecordRange";
+        closeDisplay();
         return;
     }
 
@@ -105,6 +111,7 @@ void KeyMonitorThread::run()
 
     if (!context) {
         qWarning() << "Failed to create XRecord context";
+        closeDisplay();
         return;
     }
 
@@ -117,32 +124,38 @@ void KeyMonitorThread::run()
         XRecordProcessReplies(dataDisplay);
         sleep(std::chrono::milliseconds(100));
     }
+
+    closeDisplay();
 }
 
 void KeyMonitorThread::stop()
 {
-    if (!running)
-        return;
-
     running = false;
+}
 
-    if (context && display) {
-        XRecordDisableContext(display, context);
-        XRecordFreeContext(display, context);
+void KeyMonitorThread::closeDisplay()
+{
+    if (context) {
+        XRecordDisableContext(dataDisplay, context);
+        XRecordFreeContext(dataDisplay, context);
         context = 0;
-    }
-
-    if (display) {
-        XCloseDisplay(display);
-        display = nullptr;
     }
 
     if (dataDisplay) {
         XCloseDisplay(dataDisplay);
         dataDisplay = nullptr;
     }
+
+    if (display) {
+        XCloseDisplay(display);
+        display = nullptr;
+    }
 }
 
+int KeyMonitorThread::spaceKeyCode() const
+{
+    return m_spaceKeyCode.load();
+}
 
 KeyMonitor::KeyMonitor(QObject *parent)
     : QObject(parent), currentKeycode(-1), keyIsHeld(false)
@@ -186,12 +199,7 @@ void KeyMonitor::handleKeyPress(int keycode, const QString &character)
         return;
     }
 
-    Display *display =  XOpenDisplay(nullptr);
-    if (!display) {
-        return;
-    }
-
-    bool isSpaceKeycode = XKeysymToKeycode( display, XK_space) == keycode;
+    bool isSpaceKeycode = monitorThread->spaceKeyCode() == keycode;
 
     if(keyIsHeld && !isAccentPickerVisible && isSpaceKeycode) {
 
@@ -224,9 +232,9 @@ void KeyMonitor::handleKeyRelease(int keycode)
     if (keycode == currentKeycode) {
 
         if(isAccentPickerVisible) {
-            emit emit keyEvent(false, currentChar);
+            emit keyEvent(false, currentChar);
         }
-        currentKeycode = -1;
+        currentKeycode = UN_INIT;
         keyIsHeld = false;
         currentChar.clear();
     }
@@ -234,7 +242,7 @@ void KeyMonitor::handleKeyRelease(int keycode)
 
 void KeyMonitor::checkKeyHold()
 {
-    if (currentKeycode != -1 && !currentChar.isEmpty()) {
+    if (currentKeycode != UN_INIT && !currentChar.isEmpty()) {
 
         lastWindow = getCurrentWindow();
 
@@ -302,7 +310,6 @@ static QMimeData* cloneMimeData(const QMimeData* src)
     return dst;
 }
 
-
 void KeyMonitor::insertText(const QString &text)
 {
     auto cb = QGuiApplication::clipboard();
@@ -330,4 +337,3 @@ void KeyMonitor::insertText(const QString &text)
         cb->setMimeData(backup);
     });
 }
-
