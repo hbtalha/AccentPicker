@@ -13,12 +13,12 @@ typedef struct _XDisplay Display;
 using XRecordContext = unsigned long;
 
 // uninitialized
-const int UN_INIT = -1;
+inline constexpr int UN_INIT = -1;
 
 namespace X11Events
 {
-const int KeyPressEvent = 2;
-const int KeyReleaseEvent = 3;
+inline constexpr int KeyPressEvent = 2;
+inline constexpr int KeyReleaseEvent = 3;
 }
 
 class KeyMonitorThread : public QThread
