@@ -76,6 +76,7 @@ private slots:
 private:
     QPoint getCursorPosition();
     void simulateBackspace();
+    void withClipboardBackup(const QString& injectedText, const std::function<void()>& operation);
 
     KeyMonitorThread *monitorThread;
 

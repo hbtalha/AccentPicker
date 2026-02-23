@@ -310,30 +310,40 @@ static QMimeData* cloneMimeData(const QMimeData* src)
     return dst;
 }
 
-void KeyMonitor::insertText(const QString &text)
+void KeyMonitor::withClipboardBackup(const QString &injectedText, const std::function<void ()> &operation)
 {
     auto cb = QGuiApplication::clipboard();
 
-    const QMimeData *oldMime = cb->mimeData(QClipboard::Clipboard);
-    QMimeData *backup = nullptr;
+    QMimeData* backupClipboard = nullptr;
+    QMimeData* backupSelection = nullptr;
 
-    if (oldMime) {
-        backup = cloneMimeData(oldMime);
-    }
+    if (const QMimeData* m = cb->mimeData(QClipboard::Clipboard))
+        backupClipboard = cloneMimeData(m);
 
-    cb->setText(text, QClipboard::Clipboard);
-    cb->setText(text, QClipboard::Selection);
+    if (const QMimeData* m = cb->mimeData(QClipboard::Selection))
+        backupSelection = cloneMimeData(m);
 
-    X11PlatformWindow window(lastWindow);
+    cb->setText(injectedText, QClipboard::Clipboard);
+    cb->setText(injectedText, QClipboard::Selection);
 
-    window.raise();
+    operation();
 
-    // remove the letter intended to be replaced with an accented variant
-    simulateBackspace();
+    QTimer::singleShot(500, this, [=]() {
+        if (backupClipboard)
+            cb->setMimeData(backupClipboard, QClipboard::Clipboard);
+        if (backupSelection)
+            cb->setMimeData(backupSelection, QClipboard::Selection);
+    });
+}
 
-    window.pasteClipboard();
+void KeyMonitor::insertText(const QString &text)
+{
+    withClipboardBackup(text, [&]() {
 
-    QTimer::singleShot(50, [cb, backup]() {
-        cb->setMimeData(backup);
+        X11PlatformWindow window(lastWindow);
+        window.raise();
+
+        simulateBackspace();
+        window.pasteClipboard();
     });
 }
