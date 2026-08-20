@@ -34,6 +34,10 @@ KeyMonitorThread::~KeyMonitorThread()
 
 void KeyMonitorThread::eventCallback(void* closure, void *rawData)
 {
+    if(!appConfig->get<ConfigKey::Active>()) {
+        return;
+    }
+
     XRecordInterceptData *data =
         static_cast<XRecordInterceptData*>(rawData);
 
