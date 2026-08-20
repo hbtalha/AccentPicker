@@ -83,11 +83,7 @@ void MainWindow::onAutoStartToggled(bool value)
 
 void MainWindow::onMonitorToggled(bool active)
 {
-    if(active) {
-        monitor->start();
-    } else {
-        monitor->stop();
-    }
+    monitor->setActive(active);
     appConfig->set<ConfigKey::Active>(active);
 }
 
