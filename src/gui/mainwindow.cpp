@@ -138,7 +138,8 @@ void MainWindow::setupTrayIcon()
 
     connect(showAction, &QAction::triggered, this, &QWidget::show);
     connect(activateAction, &QAction::toggled, this, &MainWindow::onMonitorToggled);
-    connect(quitAction, &QAction::triggered, []() {
+    connect(quitAction, &QAction::triggered, [this]() {
+        monitor->quit();
         qApp->quit();
     });
 }

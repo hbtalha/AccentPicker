@@ -193,6 +193,11 @@ void KeyMonitor::stop()
     monitorThread->stop();
 }
 
+void KeyMonitor::quit()
+{
+    monitorThread->exit(0);
+}
+
 void KeyMonitor::handleKeyPress(int keycode, const QString &character)
 {
     if(character.isEmpty()) {

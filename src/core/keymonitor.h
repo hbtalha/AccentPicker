@@ -59,6 +59,7 @@ public:
 
     bool start();
     void stop();
+    void quit();
     void setActive(bool enabled);
 
 public slots:
