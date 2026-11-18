@@ -23,7 +23,7 @@ MainWindow::MainWindow(KeyMonitor* monitor, QWidget* parent)
     QWidget* central = new QWidget(this);
     QVBoxLayout* layout = new QVBoxLayout(central);
 
-    auto activateCheck   = new QCheckBox("Activate "+ qApp->applicationDisplayName(), this);
+    activateCheck   = new QCheckBox("Activate "+ qApp->applicationDisplayName(), this);
     auto startHiddenCheck = new QCheckBox("Start hidden", this);
     auto autostartCheck   = new QCheckBox("Start with system", this);
 
@@ -85,6 +85,8 @@ void MainWindow::onMonitorToggled(bool active)
 {
     monitor->setActive(active);
     appConfig->set<ConfigKey::Active>(active);
+    activateCheck->setChecked(active);
+    activateAction->setChecked(active);
 }
 
 void MainWindow::onConfigButtonClicked(bool)
@@ -117,7 +119,7 @@ void MainWindow::setupTrayIcon()
 
     QMenu* trayMenu = new QMenu(this);
     QAction* showAction = trayMenu->addAction("Show");
-    QAction* activateAction = trayMenu->addAction("Activate");
+    activateAction = trayMenu->addAction("Activate");
     activateAction->setCheckable(true);
     activateAction->setChecked(appConfig->get<ConfigKey::Active>());
     trayMenu->addSeparator();

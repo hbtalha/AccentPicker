@@ -25,6 +25,8 @@ protected:
 private:
     KeyMonitor* monitor;
     QPushButton* langSetConfigButton;
+    QCheckBox* activateCheck;
+    QAction* activateAction;
 
     void setupWindow();
     void setupTrayIcon();
